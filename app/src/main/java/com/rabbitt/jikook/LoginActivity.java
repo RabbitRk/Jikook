@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
 
-    public static final int RC_SIGN_IN = 001;
     private static final String TAG = "LoginActivity";
 
 
@@ -32,11 +31,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseAuth mAuth;
     // [END declare_auth]
 
-    private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
     private EditText phoneNumberField, smsCodeVerificationField;
-    private Button startVerficationButton, verifyPhoneButton;
 
     private String verificationid;
     @Override
@@ -56,9 +53,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mAuth = FirebaseAuth.getInstance();
 
         phoneNumberField = findViewById(R.id.phone_number_edt);
-        smsCodeVerificationField = findViewById(R.id.sms_code_edt);
-        startVerficationButton = findViewById(R.id.start_auth_button);
-        verifyPhoneButton = findViewById(R.id.verify_auth_button);
+        Button startVerficationButton = findViewById(R.id.start_auth_button);
+        Button verifyPhoneButton = findViewById(R.id.verify_auth_button);
 
         startVerficationButton.setOnClickListener(this);
         verifyPhoneButton.setOnClickListener(this);
@@ -104,8 +100,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 TimeUnit.SECONDS,   // Unit of timeout
                 this,        // Activity (for callback binding)
                 mCallbacks);        // OnVerificationStateChangedCallbacks
-
-
     }
 
     private void verifyPhoneNumberWithCode(String verificationId, String code) {
@@ -178,7 +172,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (!validateSMSCode()) {
                     return;
                 }
-
                 verifyPhoneNumberWithCode(verificationid, smsCodeVerificationField.getText().toString());
                 break;
         }
