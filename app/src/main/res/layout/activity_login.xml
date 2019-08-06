@@ -20,7 +20,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:hint="@string/enter_phone_hint"
-        android:inputType="phone" />
+        android:importantForAutofill="no"
+        android:inputType="phone"
+        tools:targetApi="o" />
 
     <Button
         android:id="@+id/start_auth_button"
