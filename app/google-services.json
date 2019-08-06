@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "157566537754",
+    "firebase_url": "https://jikook-k2b15.firebaseio.com",
+    "project_id": "jikook-k2b15",
+    "storage_bucket": "jikook-k2b15.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:157566537754:android:433b14acdfc75bea",
+        "android_client_info": {
+          "package_name": "com.rabbitt.jikook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "157566537754-2u8061s10uq8i7j9sg08alrua00ftm6j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rabbitt.jikook",
+            "certificate_hash": "aba49910ceea5daf36e01e2eaa0befda2e35fef9"
+          }
+        },
+        {
+          "client_id": "157566537754-5o4gim8narsjj2d4u1gk25mbn6363377.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_ljSYVARYhRFdUwaeW6Egf843urLA6Bk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "157566537754-5o4gim8narsjj2d4u1gk25mbn6363377.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
