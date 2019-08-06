@@ -9,13 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,15 +25,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
     public static final int RC_SIGN_IN = 001;
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = "LoginActivity";
 
 
     // [START declare_auth]
     private FirebaseAuth mAuth;
     // [END declare_auth]
 
-    private boolean mVerificationInProgress = false;
-    private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
@@ -51,21 +45,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-//        FirebaseApp.initializeApp(this);
-
-        try
-        {
-            PrefsManager prefsManager = new PrefsManager(getApplicationContext());
-            if (prefsManager.isFirstTimeLaunch()) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.i(TAG,ex.getMessage());
-            ex.printStackTrace();
+        PrefsManager prefsManager = new PrefsManager(getApplicationContext());
+        if (prefsManager.isFirstTimeLaunch()) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         //intialized firebase auth
@@ -133,29 +117,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "signInWithCredential:success");
 
-                            FirebaseUser user = task.getResult().getUser();
+                        FirebaseUser user = task.getResult().getUser();
 
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                            finish();
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        finish();
 
-                        } else {
-                            // Sign in failed, display a message and update the UI
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                // The verification code entered was invalid
+                    } else {
+                        // Sign in failed, display a message and update the UI
+                        Log.w(TAG, "signInWithCredential:failure", task.getException());
+                        if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                            // The verification code entered was invalid
 
-                                smsCodeVerificationField.setError("Invalid code.");
-
-                            }
+                            smsCodeVerificationField.setError("Invalid code.");
 
                         }
+
                     }
                 });
     }
