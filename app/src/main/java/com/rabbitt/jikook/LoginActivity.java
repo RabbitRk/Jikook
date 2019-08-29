@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-//        FirebaseApp.initializeApp(this);
+        //      FirebaseApp.initializeApp(this);
 
         try
         {
