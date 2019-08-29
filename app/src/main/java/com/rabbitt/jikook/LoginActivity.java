@@ -72,12 +72,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mAuth = FirebaseAuth.getInstance();
 
         phoneNumberField = findViewById(R.id.phone_number_edt);
-        smsCodeVerificationField = findViewById(R.id.sms_code_edt);
+//        smsCodeVerificationField = findViewById(R.id.sms_code_edt);
         startVerficationButton = findViewById(R.id.start_auth_button);
-        verifyPhoneButton = findViewById(R.id.verify_auth_button);
+//        verifyPhoneButton = findViewById(R.id.verify_auth_button);
 
         startVerficationButton.setOnClickListener(this);
-        verifyPhoneButton.setOnClickListener(this);
+//        verifyPhoneButton.setOnClickListener(this);
 
     }
 
@@ -186,20 +186,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
 
         int id = view.getId();
-        switch (id){
-            case R.id.start_auth_button:
-                if (!validatePhoneNumberAndCode()) {
-                    return;
-                }
-                startPhoneNumberVerification(phoneNumberField.getText().toString());
-                break;
-            case  R.id.verify_auth_button:
-                if (!validateSMSCode()) {
-                    return;
-                }
-
-                verifyPhoneNumberWithCode(verificationid, smsCodeVerificationField.getText().toString());
-                break;
+        if (id == R.id.start_auth_button) {
+            if (!validatePhoneNumberAndCode()) {
+                return;
+            }
+            startPhoneNumberVerification(phoneNumberField.getText().toString());
+            //            case  R.id.verify_auth_button:
+//                if (!validateSMSCode()) {
+//                    return;
+//                }
+//
+//                verifyPhoneNumberWithCode(verificationid, smsCodeVerificationField.getText().toString());
+//                break;
         }
 
     }

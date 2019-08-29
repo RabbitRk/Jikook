@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "157566537754-kpnmdp8u0k2849abuukgv3djbamm69ed.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rabbitt.jikook",
+            "certificate_hash": "883fc4ac663d5c697f1f67b34f6f26d5bd793c8b"
+          }
+        },
+        {
           "client_id": "157566537754-2u8061s10uq8i7j9sg08alrua00ftm6j.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
