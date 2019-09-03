@@ -106,6 +106,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
         signInWithPhoneAuthCredential(credential);
+
     }
 
 
@@ -126,11 +127,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Log.w(TAG, "signInWithCredential:failure", task.getException());
                         if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                             // The verification code entered was invalid
-
                             smsCodeVerificationField.setError("Invalid code.");
-
                         }
-
                     }
                 });
     }

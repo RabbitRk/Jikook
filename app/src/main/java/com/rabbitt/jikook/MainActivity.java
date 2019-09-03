@@ -3,13 +3,19 @@ package com.rabbitt.jikook;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.rabbitt.jikook.Preferences.PrefsManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    Button maleb, femaleb, resultb;
+    String gender = null;
+    Boolean isSel = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +30,18 @@ public class MainActivity extends AppCompatActivity {
             prefsManager.setFirstTimeLaunch(true);
         }
 
+        init();
+
+    }
+
+    private void init() {
+        maleb = findViewById(R.id.malebtn);
+        femaleb = findViewById(R.id.femalebtn);
+        resultb = findViewById(R.id.result);
+
+        maleb.setOnClickListener(this);
+        femaleb.setOnClickListener(this);
+        resultb.setOnClickListener(this);
     }
 
     @Override
@@ -46,5 +64,33 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId())
+        {
+            case R.id.malebtn:
+
+                maleb.setBackgroundResource(R.drawable.btn_bg_selected);
+                femaleb.setBackgroundResource(R.drawable.btn_bg);
+                gender = "Male";
+                break;
+
+            case R.id.femalebtn:
+
+                femaleb.setBackgroundResource(R.drawable.btn_bg_selected);
+                maleb.setBackgroundResource(R.drawable.btn_bg);
+                gender = "Female";
+
+                break;
+
+            case R.id.result:
+
+                Toast.makeText(this, "Gender: "+gender, Toast.LENGTH_SHORT).show();
+                break;
+
+        }
     }
 }
