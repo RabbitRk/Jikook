@@ -1,6 +1,8 @@
 package com.rabbitt.jikook;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,10 +11,18 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.firebase.client.Firebase;
 import com.rabbitt.jikook.Preferences.PrefsManager;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = "MainActivity";
     Button maleb, femaleb, resultb;
     String gender = null;
     Boolean isSel = true;
@@ -30,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             prefsManager.setFirstTimeLaunch(true);
         }
 
+        Firebase.setAndroidContext(this);
         init();
 
     }
@@ -87,10 +98,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.result:
-
+                register();
                 Toast.makeText(this, "Gender: "+gender, Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, UserActivity.class));
                 break;
 
         }
+    }
+
+    private void register() {
+
+        String url = "https://jikook-k2b15.firebaseio.com/users.json";
+
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>(){
+            @Override
+            public void onResponse(String s) {
+                Log.i(TAG, "onResponse: Main"+s);
+                Firebase reference = new Firebase("https://jikook-k2b15.firebaseio.com/users");
+
+                if(s.equals("null")) {
+                    reference.child("user_id").setValue("pass");
+                    Toast.makeText(getApplicationContext(), "registration successful", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Log.i(TAG, "onResponse: ");
+//                    try {
+//                        JSONObject obj = new JSONObject(s);
+//
+//                        if (!obj.has(user)) {
+//                            reference.child(user).child("password").setValue(pass);
+//                            Toast.makeText(Register.this, "registration successful", Toast.LENGTH_LONG).show();
+//                        } else {
+//                            Toast.makeText(Register.this, "username already exists", Toast.LENGTH_LONG).show();
+//                        }
+//
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+                }
+
+            }
+
+        },new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                System.out.println("" + volleyError );
+            }
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(this);
+        rQueue.add(request);
     }
 }

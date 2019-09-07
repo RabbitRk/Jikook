@@ -1,49 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".LoginActivity">
+    android:background="@drawable/bgcomp"
+    tools:context=".LoginActivity" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:padding="10dp"
-        android:text="@string/message"
-        android:textAlignment="center" />
 
-    <EditText
-        android:id="@+id/phone_number_edt"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:hint="@string/enter_phone_hint"
-        android:importantForAutofill="no"
-        android:inputType="phone"
-        tools:targetApi="o" />
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/start_auth_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@color/colorAccent"
-        android:text="@string/start_phone_auth"
-        android:textColor="#fff" />
+        <Button
+            android:id="@+id/start_auth_button"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:background="@drawable/splash"
+            android:paddingBottom="10dp"
+            android:text="@string/start_phone_auth"
+            android:textColor="#fff" />
 
-    <Button
-        android:id="@+id/verify_auth_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@color/colorAccent"
-        android:text="@string/verify_phone_auth"
-        android:textColor="#fff"
-        android:visibility="gone" />
+        <EditText
+            android:id="@+id/Dob"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:background="@drawable/txtbox"
+            android:hint="@string/date_of_birth"
+            android:importantForAutofill="no"
+            android:inputType="date"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:paddingBottom="15dp"
+            android:textColor="@color/txtcolor" />
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/NickName"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:background="@drawable/txtbox"
+            android:hint="@string/nickname"
+            android:importantForAutofill="no"
+            android:inputType="text|textShortMessage"
+            android:maxLines="1"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:paddingBottom="15dp"
+            android:textColor="@color/txtcolor" />
+
+        <EditText
+            android:id="@+id/phone_number_edt"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:background="@drawable/txtbox"
+            android:hint="@string/enter_phone_hint"
+            android:importantForAutofill="no"
+            android:inputType="phone"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:paddingBottom="15dp"
+            android:textColor="@color/txtcolor" />
+
+        <EditText
+            android:id="@+id/Bio"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/txtbox"
+            android:cursorVisible="false"
+            android:hint="@string/bio"
+            android:importantForAutofill="no"
+            android:inputType="text|textShortMessage"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:paddingBottom="15dp"
+            android:textColor="@color/txtcolor" />
+
+        <EditText
+            android:id="@+id/userName"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:background="@drawable/txtbox"
+            android:hint="@string/name"
+            android:importantForAutofill="no"
+            android:inputType="text|textShortMessage"
+            android:maxLines="1"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:paddingBottom="15dp"
+            android:textColor="@color/txtcolor" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/malebtn"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/btn_bg"
+                android:drawableStart="@drawable/ic_mood"
+                android:paddingStart="20dp"
+                android:text="@string/male"
+                android:textAllCaps="false"
+                android:textColor="#fff"
+                android:textSize="18sp"
+                tools:ignore="ButtonStyle,RtlSymmetry" />
+
+            <Button
+                android:id="@+id/femalebtn"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_bg"
+                android:drawableStart="@drawable/ic_mood"
+                android:paddingStart="20dp"
+                android:text="@string/female"
+                android:textAllCaps="false"
+                android:textColor="#fff"
+                android:textSize="18sp"
+                tools:ignore="ButtonStyle,RtlSymmetry" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="128dp"
+                android:layout_height="129dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/logo"
+                android:src="@drawable/logo"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/textView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="32dp"
+                android:fontFamily="@font/neosans"
+                android:text="@string/jikook"
+                android:textColor="@color/logocolor"
+                android:textSize="50sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+
+</ScrollView>
