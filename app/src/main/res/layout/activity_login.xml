@@ -23,6 +23,23 @@
             android:textColor="#fff" />
 
         <EditText
+            android:id="@+id/Bio"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/txtbox"
+            android:cursorVisible="false"
+            android:hint="@string/bio"
+            android:importantForAutofill="no"
+            android:inputType="text|textShortMessage"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:paddingBottom="15dp"
+            android:textColor="@color/txtcolor"
+            android:textColorHint="@color/txtcolor" />
+
+        <EditText
             android:id="@+id/NickName"
             android:layout_width="350dp"
             android:layout_height="60dp"
@@ -68,24 +85,6 @@
 <!--            android:textColorHint="@color/txtcolor"-->
 <!--            android:paddingBottom="15dp"-->
 <!--            android:textColor="@color/txtcolor" />-->
-
-        <EditText
-            android:id="@+id/Bio"
-            android:layout_width="350dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/txtbox"
-            android:cursorVisible="false"
-            android:hint="@string/bio"
-            android:importantForAutofill="no"
-            android:inputType="text|textShortMessage"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:paddingBottom="15dp"
-            android:textColor="@color/txtcolor"
-            android:textColorHint="@color/txtcolor" />
-
         <EditText
             android:id="@+id/userName"
             android:layout_width="350dp"
@@ -99,8 +98,11 @@
             android:paddingStart="30dp"
             android:paddingEnd="30dp"
             android:paddingBottom="15dp"
-            android:textColorHint="@color/txtcolor"
-            android:textColor="@color/txtcolor" />
+            android:textColor="@color/txtcolor"
+            android:textColorHint="@color/txtcolor" />
+
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -157,6 +159,8 @@
                 />
         </LinearLayout>
 
+
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -189,6 +193,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
         <com.lusfold.spinnerloading.SpinnerLoading
             android:id="@+id/spinner"

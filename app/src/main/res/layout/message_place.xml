@@ -13,7 +13,10 @@
         android:background="@drawable/txtbox"
         android:maxHeight="80dp"
         android:textColor="#CFD8DC"
-        android:textColorHint="#CFD8DC" />
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:paddingBottom="15dp"
+        android:textColorHint="#CFD8DC"  />
 
     <ImageView
         android:id="@+id/sendButton"

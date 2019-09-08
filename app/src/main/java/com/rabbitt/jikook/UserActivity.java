@@ -16,6 +16,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.rabbitt.jikook.Preferences.PrefsManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,7 +65,9 @@ public class UserActivity extends AppCompatActivity {
 
 
         usersList.setOnItemClickListener((parent, view, position, id) -> {
-                UserDetails.chatWith = al.get(position);
+//                UserDetails.chatWith = al.get(position);
+                PrefsManager pm = new PrefsManager(this);
+                pm.chatwith(al.get(position));
                 startActivity(new Intent(this, ChatRoom.class));
         });
     }

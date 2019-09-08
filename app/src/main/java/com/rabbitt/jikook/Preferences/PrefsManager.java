@@ -8,17 +8,19 @@ public class PrefsManager {
     //user details
     public static final String ID_KEY = "ID_KEY";
     public static final String USER_PREFS = "USER_DETAILS";
+    public static final String USER_PARTNER = "USER_PARTNER";
     public static final String USER_NAME = "USER_KEY";
     public static final String USER_PHONE = "USER_PHONE";
     public static final String USER_NICK = "USER_NICK";
     public static final String USER_GENDER = "USER_GENDER";
     public static final String USER_BIO = "USER_BIO";
     public static final String USER_DOB = "USER_DOB";
+    public static final String CHAT_WITH = "CHAT_WITH";
     // Shared preferences file name
     private static final String PREF_NAME = "USER_PREFS";
     private static final String LOGIN = "IsFirstTimeLaunch";
-    private SharedPreferences pref;
-    private SharedPreferences.Editor editor, user_editor;
+    private SharedPreferences pref, partner_pref;
+    private SharedPreferences.Editor editor, user_editor, partner_editor;
 
     @SuppressLint("CommitPrefEdits")
     public PrefsManager(Context context) {
@@ -30,6 +32,10 @@ public class PrefsManager {
 
         SharedPreferences userpref = context.getSharedPreferences(USER_PREFS, PRIVATE_MODE);
         user_editor = userpref.edit();
+
+        partner_pref = context.getSharedPreferences(USER_PARTNER, PRIVATE_MODE);
+        partner_editor = partner_pref.edit();
+
     }
 
     public boolean isFirstTimeLaunch() {
@@ -48,5 +54,11 @@ public class PrefsManager {
         user_editor.putString(USER_NICK,nname);
         user_editor.putString(USER_BIO,bio);
         user_editor.commit();
+    }
+
+    public void chatwith(String chat_soul)
+    {
+        partner_editor.putString(CHAT_WITH,chat_soul);
+        partner_editor.commit();
     }
 }

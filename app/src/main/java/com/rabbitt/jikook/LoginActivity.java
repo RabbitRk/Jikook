@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         PrefsManager prefsManager = new PrefsManager(getApplicationContext());
         if (prefsManager.isFirstTimeLaunch()) {
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), ChatRoom.class);
             startActivity(intent);
             finish();
         }
@@ -75,8 +75,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Firebase.setAndroidContext(this);
 
         init();
-
-
     }
 
     private void init() {
