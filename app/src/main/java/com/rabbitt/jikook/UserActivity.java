@@ -5,10 +5,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,6 +35,7 @@ public class UserActivity extends AppCompatActivity {
     private static final String TAG = "UserActivity";
     ListView usersList;
     TextView noUsersText;
+    Button refresh;
     ArrayList<String> al = new ArrayList<>();
     int totalUsers = 0;
     ProgressDialog pd;
@@ -44,10 +49,22 @@ public class UserActivity extends AppCompatActivity {
 
         usersList = findViewById(R.id.usersList);
         noUsersText = findViewById(R.id.noUsersText);
+        refresh = findViewById(R.id.refresBtn);
 
         userpref = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
         userName = userpref.getString(USER_NAME,"");
 
+        PrefsManager prefsManager = new PrefsManager(getApplicationContext());
+
+        if (!prefsManager.isFirstTimeLaunch()) {
+            prefsManager.setFirstTimeLaunch(true);
+        }
+
+
+        getUsers();
+    }
+
+    private void getUsers() {
 
         pd = new ProgressDialog(UserActivity.this);
         pd.setMessage("Loading...");
@@ -66,9 +83,9 @@ public class UserActivity extends AppCompatActivity {
 
         usersList.setOnItemClickListener((parent, view, position, id) -> {
 //                UserDetails.chatWith = al.get(position);
-                PrefsManager pm = new PrefsManager(this);
-                pm.chatwith(al.get(position));
-                startActivity(new Intent(this, ChatRoom.class));
+            PrefsManager pm = new PrefsManager(this);
+            pm.chatwith(al.get(position));
+            startActivity(new Intent(this, ChatRoom.class));
         });
     }
 
@@ -95,13 +112,45 @@ public class UserActivity extends AppCompatActivity {
 
         if (totalUsers <= 1) {
             noUsersText.setVisibility(View.VISIBLE);
+            refresh.setVisibility(View.VISIBLE);
             usersList.setVisibility(View.GONE);
         } else {
             noUsersText.setVisibility(View.GONE);
+            refresh.setVisibility(View.GONE);
             usersList.setVisibility(View.VISIBLE);
             usersList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, al));
         }
 
         pd.dismiss();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            Toast.makeText(this, "Under Development", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if (id == R.id.action_refresh) {
+            getUsers();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void onClick_getUser(View view) {
+        getUsers();
     }
 }
