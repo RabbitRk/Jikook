@@ -48,4 +48,5 @@ dependencies {
 
     //DatePicker
     implementation 'com.github.drawers:SpinnerDatePicker:2.0.1'
+    implementation 'com.lusfold.spinnerloading:library:1.0.0'
 }

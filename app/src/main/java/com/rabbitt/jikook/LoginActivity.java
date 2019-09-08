@@ -9,16 +9,27 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.firebase.client.Firebase;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.lusfold.spinnerloading.SpinnerLoading;
 import com.rabbitt.jikook.Preferences.PrefsManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -36,11 +47,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
-    EditText userNameTxt, phoneNumberTxt, dobTxt, bioTxt, nickNameTxt;
+    EditText userNameTxt, phoneNumberTxt, bioTxt, nickNameTxt;
+    TextView dobTxt;
+    LinearLayout parent;
 
     Button maleb, femaleb, startVerificationButton;
     String gender = null;
     DatePickerDialog picker;
+
+    String userName, phoneNumber, dob, nickName, Bio;
+    SpinnerLoading sp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate: ");
@@ -56,6 +72,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         //intialized firebase auth
         mAuth = FirebaseAuth.getInstance();
+        Firebase.setAndroidContext(this);
 
         init();
 
@@ -71,6 +88,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         startVerificationButton = findViewById(R.id.start_auth_button);
         maleb = findViewById(R.id.malebtn);
         femaleb = findViewById(R.id.femalebtn);
+        parent = findViewById(R.id.dobParent);
+        sp = findViewById(R.id.spinner);
 
         //cancelling the softinput for dob
         dobTxt.setShowSoftInputOnFocus(false);
@@ -80,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         femaleb.setOnClickListener(this);
 
         dobTxt.setOnClickListener(this);
-
+        parent.setOnClickListener(this);
 
     }
 
@@ -132,10 +151,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             FirebaseUser user = Objects.requireNonNull(task.getResult()).getUser();
                             if (user!=null)
                             {
-                                Log.i(TAG, "signInWithPhoneAuthCredential: "+user.getUid()+" "+user.getDisplayName()+" "+user.getPhoneNumber());
+                               FireToDatabase();
                             }
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                            finish();
+                            sp.setVisibility(View.GONE);
+
+                            if (setPrefsdetails())
+                            {
+                                startActivity(new Intent(getApplicationContext(), UserActivity.class));
+                                finish();
+                            }
                         }
                         catch (NullPointerException ex)
                         {
@@ -147,42 +171,92 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
     }
 
+    private boolean setPrefsdetails() {
+        PrefsManager prefsManager = new PrefsManager(this);
+        prefsManager.userPreferences(userName, phoneNumber, dob, nickName, Bio);
+        Log.i(TAG, "set preference Hid.............." + userName);
+        return true;
+    }
+
+    private void FireToDatabase() {
+
+        String url = "https://jikook-k2b15.firebaseio.com/users.json";
+
+        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
+
+            Firebase reference = new Firebase("https://jikook-k2b15.firebaseio.com/users");
+
+            if(s.equals("null")) {
+                reference.child(userName).child("dob").setValue(dob);
+                reference.child(userName).child("nickname").setValue(nickName);
+                reference.child(userName).child("phone").setValue(phoneNumber);
+                reference.child(userName).child("gender").setValue(gender);
+                reference.child(userName).child("bio").setValue(Bio);
+
+                Toast.makeText(LoginActivity.this, "Soul Registered successfully", Toast.LENGTH_LONG).show();
+
+            }
+            else {
+                try {
+                    JSONObject obj = new JSONObject(s);
+
+                    if (!obj.has(userName)) {
+                        reference.child(userName).child("dob").setValue(dob);
+                        reference.child(userName).child("nickname").setValue(nickName);
+                        reference.child(userName).child("phone").setValue(phoneNumber);
+                        reference.child(userName).child("gender").setValue(gender);
+                        reference.child(userName).child("bio").setValue(Bio);
+
+                        Toast.makeText(LoginActivity.this, "Soul Registered successfully", Toast.LENGTH_LONG).show();
+
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Username already exists", Toast.LENGTH_LONG).show();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }, volleyError -> System.out.println("" + volleyError ));
+
+        RequestQueue rQueue = Volley.newRequestQueue(this);
+        rQueue.add(request);
+    }
+
     private boolean validateUserDetails() {
 
-        String userName = userNameTxt.getText().toString();
-        String phoneNumber = phoneNumberTxt.getText().toString();
-        String dob = dobTxt.getText().toString();
-        String nickName = nickNameTxt.getText().toString();
-        String Bio = bioTxt.getText().toString();
+        userName = userNameTxt.getText().toString();
+        phoneNumber = phoneNumberTxt.getText().toString();
+        dob = dobTxt.getText().toString();
+        nickName = nickNameTxt.getText().toString();
+        Bio = bioTxt.getText().toString();
 
+
+        if (TextUtils.isEmpty(userName)) {
+            userNameTxt.setError("Invalid username.");
+            return false;
+        }
+        if (TextUtils.isEmpty(dob)) {
+            dobTxt.setError("Invalid date of birth.");
+            return false;
+        }
+        if (TextUtils.isEmpty(nickName)) {
+            nickNameTxt.setError("Invalid nickname.");
+            return false;
+        }
         if (TextUtils.isEmpty(phoneNumber)) {
             phoneNumberTxt.setError("Invalid phone number.");
             return false;
         }
-        if (TextUtils.isEmpty(userName)) {
-            phoneNumberTxt.setError("Invalid username.");
-            return false;
-        }
-        if (TextUtils.isEmpty(dob)) {
-            phoneNumberTxt.setError("Invalid date of birth.");
-            return false;
-        }
-        if (TextUtils.isEmpty(nickName)) {
-            phoneNumberTxt.setError("Invalid nickname.");
+        if (gender == null) {
+            Toast.makeText(this, "Invalid gender.", Toast.LENGTH_SHORT).show();
             return false;
         }
         if (TextUtils.isEmpty(Bio)) {
-            phoneNumberTxt.setError("Invalid bio.");
+            bioTxt.setError("Invalid bio.");
             return false;
         }
-        if (gender == null) {
-            phoneNumberTxt.setError("Invalid gender.");
-            return false;
-        }
-
-
-
-
         return true;
     }
 
@@ -208,6 +282,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (!validateUserDetails()) {
                     return;
                 }
+                sp.setVisibility(View.VISIBLE);
                 startPhoneNumberVerification(phoneNumberTxt.getText().toString());
                 break;
             case R.id.malebtn:
@@ -221,6 +296,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 gender = "Female";
                 break;
             case R.id.Dob:
+            case R.id.dobParent:
                 openCalendar();
                 break;
 

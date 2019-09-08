@@ -6,11 +6,14 @@ import android.content.SharedPreferences;
 
 public class PrefsManager {
     //user details
-    public static final String USER_PREFS = "USER_DETAILS";
     public static final String ID_KEY = "ID_KEY";
+    public static final String USER_PREFS = "USER_DETAILS";
     public static final String USER_NAME = "USER_KEY";
     public static final String USER_PHONE = "USER_PHONE";
-    public static final String USER_EMAIL = "USER_EMAIL";
+    public static final String USER_NICK = "USER_NICK";
+    public static final String USER_GENDER = "USER_GENDER";
+    public static final String USER_BIO = "USER_BIO";
+    public static final String USER_DOB = "USER_DOB";
     // Shared preferences file name
     private static final String PREF_NAME = "USER_PREFS";
     private static final String LOGIN = "IsFirstTimeLaunch";
@@ -38,11 +41,12 @@ public class PrefsManager {
         editor.commit();
     }
 
-    public void userPreferences(String id, String username, String phonenumber, String email) {
-        user_editor.putString(ID_KEY,id);
+    public void userPreferences(String username, String phonenumber, String dob, String nname, String bio) {
         user_editor.putString(USER_NAME,username);
-        user_editor.putString(USER_EMAIL,phonenumber);
-        user_editor.putString(USER_PHONE,email);
+        user_editor.putString(USER_PHONE,phonenumber);
+        user_editor.putString(USER_DOB,dob);
+        user_editor.putString(USER_NICK,nname);
+        user_editor.putString(USER_BIO,bio);
         user_editor.commit();
     }
 }

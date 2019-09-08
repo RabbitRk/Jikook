@@ -7,7 +7,6 @@
     android:background="@drawable/bgcomp"
     tools:context=".LoginActivity" >
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,20 +23,6 @@
             android:textColor="#fff" />
 
         <EditText
-            android:id="@+id/Dob"
-            android:layout_width="350dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:background="@drawable/txtbox"
-            android:hint="@string/date_of_birth"
-            android:importantForAutofill="no"
-            android:inputType="date"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:paddingBottom="15dp"
-            android:textColor="@color/txtcolor" />
-
-        <EditText
             android:id="@+id/NickName"
             android:layout_width="350dp"
             android:layout_height="60dp"
@@ -49,6 +34,7 @@
             android:maxLines="1"
             android:paddingStart="30dp"
             android:paddingEnd="30dp"
+            android:textColorHint="@color/txtcolor"
             android:paddingBottom="15dp"
             android:textColor="@color/txtcolor" />
 
@@ -64,7 +50,24 @@
             android:paddingStart="30dp"
             android:paddingEnd="30dp"
             android:paddingBottom="15dp"
+
+            android:textColorHint="@color/txtcolor"
             android:textColor="@color/txtcolor" />
+
+<!--        <EditText-->
+<!--            android:id="@+id/Dob"-->
+<!--            android:layout_width="350dp"-->
+<!--            android:layout_height="60dp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:background="@drawable/txtbox"-->
+<!--            android:hint="@string/date_of_birth"-->
+<!--            android:importantForAutofill="no"-->
+<!--            android:inputType="date"-->
+<!--            android:paddingStart="30dp"-->
+<!--            android:paddingEnd="30dp"-->
+<!--            android:textColorHint="@color/txtcolor"-->
+<!--            android:paddingBottom="15dp"-->
+<!--            android:textColor="@color/txtcolor" />-->
 
         <EditText
             android:id="@+id/Bio"
@@ -80,7 +83,8 @@
             android:paddingStart="30dp"
             android:paddingEnd="30dp"
             android:paddingBottom="15dp"
-            android:textColor="@color/txtcolor" />
+            android:textColor="@color/txtcolor"
+            android:textColorHint="@color/txtcolor" />
 
         <EditText
             android:id="@+id/userName"
@@ -95,6 +99,7 @@
             android:paddingStart="30dp"
             android:paddingEnd="30dp"
             android:paddingBottom="15dp"
+            android:textColorHint="@color/txtcolor"
             android:textColor="@color/txtcolor" />
 
         <LinearLayout
@@ -132,6 +137,26 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/dobParent"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:background="@drawable/txtbox">
+
+            <TextView
+                android:id="@+id/Dob"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="30dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="30dp"
+                android:text="@string/date_of_birth"
+                android:textColor="@color/txtcolor"
+                android:textSize="18sp"
+                />
+        </LinearLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -165,7 +190,12 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <com.lusfold.spinnerloading.SpinnerLoading
+            android:id="@+id/spinner"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone" />
     </LinearLayout>
-
 
 </ScrollView>
