@@ -12,9 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -32,6 +32,7 @@ import static com.rabbitt.jikook.Preferences.PrefsManager.USER_NAME;
 import static com.rabbitt.jikook.Preferences.PrefsManager.USER_PREFS;
 
 public class UserActivity extends AppCompatActivity {
+
     private static final String TAG = "UserActivity";
     ListView usersList;
     TextView noUsersText;
@@ -47,9 +48,20 @@ public class UserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
 
+        Toolbar toolbar = findViewById(R.id.tool);
+        setSupportActionBar(toolbar);
+
+        //get tool bar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+        //toolbar action to go back is any activity exists
+        toolbar.setNavigationOnClickListener(v -> finish());
+
         usersList = findViewById(R.id.usersList);
         noUsersText = findViewById(R.id.noUsersText);
-        refresh = findViewById(R.id.refresBtn);
 
         userpref = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
         userName = userpref.getString(USER_NAME,"");
@@ -59,8 +71,6 @@ public class UserActivity extends AppCompatActivity {
         if (!prefsManager.isFirstTimeLaunch()) {
             prefsManager.setFirstTimeLaunch(true);
         }
-
-
         getUsers();
     }
 
@@ -80,9 +90,7 @@ public class UserActivity extends AppCompatActivity {
         RequestQueue rQueue = Volley.newRequestQueue(this);
         rQueue.add(request);
 
-
         usersList.setOnItemClickListener((parent, view, position, id) -> {
-//                UserDetails.chatWith = al.get(position);
             PrefsManager pm = new PrefsManager(this);
             pm.chatwith(al.get(position));
             startActivity(new Intent(this, ChatRoom.class));
@@ -90,9 +98,9 @@ public class UserActivity extends AppCompatActivity {
     }
 
     public void doOnSuccess(String s) {
-        try {
+        try
+        {
             JSONObject obj = new JSONObject(s);
-
             Iterator i = obj.keys();
             String key = "";
 
@@ -102,25 +110,21 @@ public class UserActivity extends AppCompatActivity {
                 if (!key.equals(userName)) {
                     al.add(key);
                 }
-
                 totalUsers++;
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         if (totalUsers <= 1) {
             noUsersText.setVisibility(View.VISIBLE);
-            refresh.setVisibility(View.VISIBLE);
             usersList.setVisibility(View.GONE);
         } else {
+            usersList.setAdapter(null);
             noUsersText.setVisibility(View.GONE);
-            refresh.setVisibility(View.GONE);
             usersList.setVisibility(View.VISIBLE);
-            usersList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, al));
+            usersList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, al));
         }
-
         pd.dismiss();
     }
 
@@ -138,19 +142,11 @@ public class UserActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            Toast.makeText(this, "Under Development", Toast.LENGTH_SHORT).show();
-            return true;
-        }
         if (id == R.id.action_refresh) {
             getUsers();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void onClick_getUser(View view) {
-        getUsers();
     }
 }

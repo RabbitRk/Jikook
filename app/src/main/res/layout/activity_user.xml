@@ -7,27 +7,6 @@
     android:orientation="vertical"
     tools:context=".UserActivity">
 
-    <Button
-        android:id="@+id/refresBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClick_getUser"
-        android:text="Refresh"
-        android:visibility="gone"
-        />
-
-    <ListView
-        android:id="@+id/usersList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/noUsersText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="no_users_found"
-        android:visibility="gone"/>
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -43,4 +22,24 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+<!--    <Button-->
+<!--        android:id="@+id/refresBtn"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:onClick="onClick_getUser"-->
+<!--        android:text="Refresh"-->
+<!--        android:visibility="gone"-->
+<!--        />-->
+
+    <ListView
+        android:id="@+id/usersList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/noUsersText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="no_users_found"
+        android:visibility="gone"/>
 </LinearLayout>

@@ -22,23 +22,35 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ScrollView
-        android:id="@+id/scrollView"
+<!--    <ListView-->
+<!--        android:id="@+id/chatList"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_weight="20"-->
+<!--        android:layout_height="0dp"/>-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chatlist"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="20">
-        <RelativeLayout
-            android:id="@+id/layout2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:id="@+id/layout1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-            </LinearLayout>
-        </RelativeLayout>
-    </ScrollView>
+        android:layout_weight="20"/>
+<!--    <ScrollView-->
+<!--        android:id="@+id/scrollView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_weight="20">-->
+
+<!--        <RelativeLayout-->
+<!--            android:id="@+id/layout2"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content">-->
+<!--            <LinearLayout-->
+<!--                android:id="@+id/layout1"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical">-->
+<!--            </LinearLayout>-->
+<!--        </RelativeLayout>-->
+
+<!--    </ScrollView>-->
 
     <include
         layout="@layout/message_place"

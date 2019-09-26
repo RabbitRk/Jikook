@@ -21,7 +21,7 @@
 
     <string name="message">This App will send you an SMS message to verify your phone number. Kindly enter your phone Number</string>
     <string name="enter_phone_hint">Phone Number</string>
-    <string name="start_phone_auth">Lemme In</string>
+    <string name="start_phone_auth">Let me In</string>
     <string name="verify_phone_auth">Verify</string>
     <string name="enter_verify_code">Enter SMS Code</string>
     <string name="success_message">You have successfully Logged in</string>
@@ -29,8 +29,8 @@
     <string name="date_of_birth">Date of Birth</string>
     <string name="name">Name</string>
     <string name="jikook">JiKook</string>
-    <string name="logo">Logo</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="bio">Bio</string>
+    <string name="logo">Logo</string>
 </resources>

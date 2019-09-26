@@ -4,14 +4,14 @@
 
     <!-- View background color -->
     <corners
-        android:bottomLeftRadius="0.1dp"
+        android:bottomLeftRadius="10dp"
         android:bottomRightRadius="10dp"
         android:topLeftRadius="10dp"
         android:topRightRadius="10dp" />
 
     <!-- The radius makes the corners rounded -->
     <solid
-        android:color="@color/colorAccent" >
+        android:color="@color/colorPrimary" >
     </solid>
 
 

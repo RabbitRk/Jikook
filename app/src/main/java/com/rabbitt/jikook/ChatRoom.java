@@ -1,28 +1,34 @@
 package com.rabbitt.jikook;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.rabbitt.jikook.ChatAdapter.ChatMessage;
+import com.rabbitt.jikook.ChatAdapter.ToggleAdapter;
 import com.rabbitt.jikook.Preferences.PrefsManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -31,7 +37,7 @@ import static com.rabbitt.jikook.Preferences.PrefsManager.USER_NAME;
 import static com.rabbitt.jikook.Preferences.PrefsManager.USER_PARTNER;
 import static com.rabbitt.jikook.Preferences.PrefsManager.USER_PREFS;
 
-public class ChatRoom extends AppCompatActivity {
+public class ChatRoom extends AppCompatActivity implements ToggleAdapter.OnRecycleItemListener{
 
     private static final String TAG = "ChatRoom";
     LinearLayout layout;
@@ -43,14 +49,20 @@ public class ChatRoom extends AppCompatActivity {
 
     SharedPreferences sp;
     String userName, chatwith;
+    RecyclerView recyclerView;
+    List<ChatMessage> data = new ArrayList<>();
+    ChatMessage model = null;
+//    public ArrayList<ChatMessage> messages;
+    private ToggleAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
 
-        layout = findViewById(R.id.layout1);
-        layout_2 = findViewById(R.id.layout2);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+        recyclerView = findViewById(R.id.chatlist);
         sendButton = findViewById(R.id.sendButton);
         messageArea = findViewById(R.id.messageArea);
         scrollView = findViewById(R.id.scrollView);
@@ -60,7 +72,6 @@ public class ChatRoom extends AppCompatActivity {
         if (!prefsManager.isFirstTimeLaunch()) {
             prefsManager.setFirstTimeLaunch(true);
         }
-
 
         Firebase.setAndroidContext(this);
 
@@ -101,10 +112,10 @@ public class ChatRoom extends AppCompatActivity {
                 String userNamee = Objects.requireNonNull(map.get("user")).toString();
 
                 if(userNamee.equals(userName)){
-                    addMessageBox(message, 1);
+                    addMessageBox(message, 0);
                 }
                 else{
-                    addMessageBox(message, 2);
+                    addMessageBox(message, 1);
                 }
             }
 
@@ -130,26 +141,37 @@ public class ChatRoom extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     private void addMessageBox(String message, int type) {
 
-        TextView textView = new TextView(this);
-        textView.setText(message);
-        textView.setPadding(5,5,5,5);
+        Log.i(TAG, "addMessageBox: "+message+type);
 
-        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp2.weight = 7.0f;
+        model = new ChatMessage();
+        model.setMessage(message);
+        model.setIsMine(type);
 
-        if(type == 2) {
-            lp2.gravity = Gravity.START;
-            textView.setBackgroundResource(R.drawable.bubble_in);
-        }
-        else{
-            lp2.gravity = Gravity.END;
-            textView.setBackgroundResource(R.drawable.bubble_out);
-        }
-        textView.setLayoutParams(lp2);
-        layout.addView(textView);
+        Log.i(TAG, message+" "+type);
+        data.add(model);
 
-        scrollView.fullScroll(View.FOCUS_DOWN);
+        adapter = new ToggleAdapter(data, this, this);
+        Log.i("HIteshdata", "" + data);
+
+        LinearLayoutManager reLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(reLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        reLayoutManager.setStackFromEnd(true);
+        reLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setAdapter(adapter);
+
+
+    }
+
+    @Override
+    public void OnItemClick(int position) {
+
     }
 }
