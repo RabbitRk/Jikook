@@ -12,15 +12,55 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <Button
-            android:id="@+id/start_auth_button"
-            android:layout_width="300dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="128dp"
+                android:layout_height="129dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/logo"
+                android:src="@drawable/logo"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/textView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="32dp"
+                android:fontFamily="@font/neosans"
+                android:text="@string/jikook"
+                android:textColor="@color/logocolor"
+                android:textSize="50sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <EditText
+            android:id="@+id/userName"
+            android:layout_width="350dp"
             android:layout_height="60dp"
             android:layout_gravity="center"
-            android:background="@drawable/splash"
-            android:paddingBottom="10dp"
-            android:text="@string/start_phone_auth"
-            android:textColor="#fff" />
+            android:background="@drawable/txtbox"
+            android:hint="@string/name"
+            android:importantForAutofill="no"
+            android:inputType="text|textShortMessage"
+            android:maxLines="1"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:paddingBottom="15dp"
+            android:textColor="@color/txtcolor"
+            android:textColorHint="@color/txtcolor" />
 
         <EditText
             android:id="@+id/phone_number_edt"
@@ -68,24 +108,6 @@
             android:paddingBottom="15dp"
             android:textColor="@color/txtcolor" />
 
-        <EditText
-            android:id="@+id/userName"
-            android:layout_width="350dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:background="@drawable/txtbox"
-            android:hint="@string/name"
-            android:importantForAutofill="no"
-            android:inputType="text|textShortMessage"
-            android:maxLines="1"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:paddingBottom="15dp"
-            android:textColor="@color/txtcolor"
-            android:textColorHint="@color/txtcolor" />
-
-
-
 <!--        <EditText-->
 <!--            android:id="@+id/Dob"-->
 <!--            android:layout_width="350dp"-->
@@ -100,28 +122,6 @@
 <!--            android:textColorHint="@color/txtcolor"-->
 <!--            android:paddingBottom="15dp"-->
 <!--            android:textColor="@color/txtcolor" />-->
-
-        <LinearLayout
-            android:id="@+id/dobParent"
-            android:layout_width="350dp"
-            android:layout_marginTop="15dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:background="@drawable/txtbox">
-
-            <TextView
-                android:id="@+id/Dob"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="30dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="30dp"
-                android:text="@string/date_of_birth"
-                android:textColor="@color/txtcolor"
-                android:textSize="18sp"
-                />
-        </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -156,40 +156,38 @@
                 tools:ignore="ButtonStyle,RtlSymmetry" />
 
         </LinearLayout>
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp">
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="128dp"
-                android:layout_height="129dp"
-                android:layout_gravity="center"
-                android:contentDescription="@string/logo"
-                android:src="@drawable/logo"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/textView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:id="@+id/dobParent"
+            android:layout_width="350dp"
+            android:layout_marginTop="15dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:background="@drawable/txtbox">
 
             <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
+                android:id="@+id/Dob"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginEnd="32dp"
-                android:fontFamily="@font/neosans"
-                android:text="@string/jikook"
-                android:textColor="@color/logocolor"
-                android:textSize="50sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:paddingStart="30dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="30dp"
+                android:text="@string/date_of_birth"
+                android:textColor="@color/txtcolor"
+                android:textSize="18sp"
+                />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/start_auth_button"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:background="@drawable/splash"
+            android:paddingBottom="10dp"
+            android:text="@string/start_phone_auth"
+            android:textColor="#fff" />
+
+
 
         <com.lusfold.spinnerloading.SpinnerLoading
             android:id="@+id/spinner"
