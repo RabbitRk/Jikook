@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "MainActivity";
     Button maleb, femaleb, resultb;
     String gender = null;
-    Boolean isSel = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

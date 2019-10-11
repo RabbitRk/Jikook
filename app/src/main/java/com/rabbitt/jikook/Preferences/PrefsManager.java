@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class PrefsManager {
+
     //user details
     public static final String ID_KEY = "ID_KEY";
     public static final String USER_PREFS = "USER_DETAILS";
@@ -16,6 +17,7 @@ public class PrefsManager {
     public static final String USER_BIO = "USER_BIO";
     public static final String USER_DOB = "USER_DOB";
     public static final String CHAT_WITH = "CHAT_WITH";
+
     // Shared preferences file name
     private static final String PREF_NAME = "USER_PREFS";
     private static final String LOGIN = "IsFirstTimeLaunch";

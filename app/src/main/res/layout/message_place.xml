@@ -14,7 +14,7 @@
         android:textColor="#CFD8DC"
         android:paddingStart="30dp"
         android:paddingEnd="30dp"
-        android:layout_weight="1"
+        android:layout_weight="3"
         android:paddingBottom="15dp"
         android:textColorHint="#CFD8DC"  />
 

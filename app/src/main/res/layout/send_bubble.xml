@@ -9,7 +9,6 @@
         android:id="@+id/singleMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_margin="5dip"
         android:background="@drawable/bubble_in"
         android:paddingStart="10dip"
