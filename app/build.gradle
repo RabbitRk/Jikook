@@ -5,7 +5,7 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.1"
     defaultConfig {
-        applicationId "com.rabbitt.jikook"
+        applicationId 'com.kookie.jikook'
         minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
@@ -22,6 +22,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    dataBinding {
+        enabled = true
+    }
+
 }
 
 dependencies {
@@ -35,7 +39,6 @@ dependencies {
 
     //volley library
     implementation 'com.android.volley:volley:1.1.1'
-
     implementation 'com.google.firebase:firebase-auth:19.0.0'
 
     //firebase ui
@@ -51,4 +54,14 @@ dependencies {
     implementation 'com.lusfold.spinnerloading:library:1.0.0'
     implementation 'com.google.firebase:firebase-database:19.1.0'
     implementation 'com.google.firebase:firebase-storage:19.1.0'
+
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    //CropImage
+    //  implementation 'com.yalantis:ucrop:2.2.0'
+    //  implementation 'xyz.dev_juyoung:cropicker:1.0.3'
+    //  implementation 'com.github.nguyenhoanglam:ImagePicker:2.0.0'
+    //  implementation 'gun0912.ted:tedbottompicker:2.0.1'
+
+    implementation 'com.fxn769:pix:1.4.4'
+    implementation 'de.hdodenhof:circleimageview:3.0.1'
 }

@@ -7,6 +7,11 @@
         android:icon="@drawable/refresh_white"
         android:title="Refresh"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_profile"
+        android:icon="@drawable/person"
+        android:title="Profile"
+        app:showAsAction="ifRoom" />
 <!--    <item-->
 <!--        android:id="@+id/action_refresh"-->
 <!--        android:orderInCategory="100"-->

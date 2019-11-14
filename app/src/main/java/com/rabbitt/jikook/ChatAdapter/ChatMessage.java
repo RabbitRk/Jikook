@@ -1,9 +1,21 @@
 package com.rabbitt.jikook.ChatAdapter;
 
 public class ChatMessage {
-    private int isMine;
+    private int isMine, type;
     private String message;
 
+    public ChatMessage()
+    {
+
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     public int getIsMine() {
         return isMine;

@@ -45,6 +45,16 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <ImageView
+            android:id="@+id/profileImg"
+            android:layout_gravity="center"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/camera"
+            android:scaleType="fitCenter"
+            android:onClick="image_"
+            android:layout_marginBottom="5dp"
+            android:background="@color/profile"/>
 
         <EditText
             android:id="@+id/userName"

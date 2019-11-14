@@ -29,12 +29,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
 
         Firebase.setAndroidContext(this);
         init();
-
     }
 
     private void init() {
@@ -100,13 +97,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void register() {
 
-        String url = "https://jikook-k2b15.firebaseio.com/users.json";
+        String url = "https://jikook-0215.firebaseio.com//users.json";
 
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>(){
             @Override
             public void onResponse(String s) {
                 Log.i(TAG, "onResponse: Main"+s);
-                Firebase reference = new Firebase("https://jikook-k2b15.firebaseio.com/users");
+                Firebase reference = new Firebase("https://jikook-0215.firebaseio.com/users");
 
                 if(s.equals("null")) {
                     reference.child("user_id").setValue("pass");

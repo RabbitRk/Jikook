@@ -1,18 +1,26 @@
 package com.rabbitt.jikook;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
@@ -20,26 +28,33 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
+import com.fxn.pix.Options;
+import com.fxn.pix.Pix;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.lusfold.spinnerloading.SpinnerLoading;
 import com.rabbitt.jikook.Preferences.PrefsManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-
     private static final String TAG = "LoginActivity";
-
 
     // [START declare_auth]
     private FirebaseAuth mAuth;
@@ -52,11 +67,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     LinearLayout parent;
 
     Button maleb, femaleb, startVerificationButton;
+    ImageView profile;
     String gender = null;
     DatePickerDialog picker;
 
     String userName, phoneNumber, dob, nickName, Bio;
     SpinnerLoading sp;
+
+
+    Uri selectedImage;
+    FirebaseStorage storage;
+    StorageReference storageRef, imageRef;
+    ProgressDialog progressDialog;
+    UploadTask uploadTask;
+
+    Uri imageUri;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate: ");
@@ -78,6 +105,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void init() {
+
         userNameTxt = findViewById(R.id.userName);
         phoneNumberTxt = findViewById(R.id.phone_number_edt);
         dobTxt = findViewById(R.id.Dob);
@@ -88,6 +116,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         femaleb = findViewById(R.id.femalebtn);
         parent = findViewById(R.id.dobParent);
         sp = findViewById(R.id.spinner);
+        profile = findViewById(R.id.profileImg);
 
         //cancelling the softinput for dob
         dobTxt.setShowSoftInputOnFocus(false);
@@ -98,6 +127,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         dobTxt.setOnClickListener(this);
         parent.setOnClickListener(this);
+
+        storage = FirebaseStorage.getInstance();
+
+        //creates a storage reference
+        storageRef = storage.getReference();
 
     }
 
@@ -116,7 +150,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onVerificationFailed(FirebaseException e) {
                 Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "onVerificationFailed: "+e.getMessage());
+                Log.i(TAG, "onVerificationFailed: " + e.getMessage());
             }
 
             @Override
@@ -127,7 +161,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void startPhoneNumberVerification(String phoneNumber) {
-
+        //send otp to the server
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
                 60,              // Timeout duration
@@ -135,7 +169,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 this,        // Activity (for callback binding)
                 mCallbacks);        // OnVerificationStateChangedCallbacks
     }
-
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
@@ -147,24 +180,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         try {
 
                             FirebaseUser user = Objects.requireNonNull(task.getResult()).getUser();
-                            if (user!=null)
-                            {
-                               FireToDatabase();
+                            if (user != null) {
+                                uploadImage_fire();
                             }
                             sp.setVisibility(View.GONE);
-
-                            if (setPrefsdetails())
-                            {
-                                startActivity(new Intent(getApplicationContext(), UserActivity.class));
-                                finish();
-                            }
+                        } catch (NullPointerException ex) {
+                            Log.i(TAG, "signInWithPhoneAuthCredential: " + ex.getMessage());
                         }
-                        catch (NullPointerException ex)
-                        {
-                            Log.i(TAG, "signInWithPhoneAuthCredential: "+ex.getMessage());
-                        }
-
-
+                    } else {
+                        Toast.makeText(this, "Soul Registration unsuccessful", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -176,47 +200,78 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return true;
     }
 
-    private void FireToDatabase() {
+    private void FireToDatabase(Uri uri) {
 
-        String url = "https://jikook-k2b15.firebaseio.com/users.json";
+        String url = "https://jikook-0215.firebaseio.com/users.json";
 
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
 
-            Firebase reference = new Firebase("https://jikook-k2b15.firebaseio.com/users");
-
-            if(s.equals("null")) {
-                reference.child(userName).child("dob").setValue(dob);
-                reference.child(userName).child("nickname").setValue(nickName);
-                reference.child(userName).child("phone").setValue(phoneNumber);
-                reference.child(userName).child("gender").setValue(gender);
-                reference.child(userName).child("bio").setValue(Bio);
+            Firebase reference = new Firebase("https://jikook-0215.firebaseio.com/users");
+            String user_id = mAuth.getCurrentUser().getUid();
+            if (s.equals("null")) {
+                reference.child(user_id).child("username").setValue(userName);
+                reference.child(user_id).child("dob").setValue(dob);
+                reference.child(user_id).child("nickname").setValue(nickName);
+                reference.child(user_id).child("phone").setValue(phoneNumber);
+                reference.child(user_id).child("gender").setValue(gender);
+                reference.child(user_id).child("bio").setValue(Bio);
+                reference.child(user_id).child("imageUrl").setValue(String.valueOf(uri));
 
                 Toast.makeText(LoginActivity.this, "Soul Registered successfully", Toast.LENGTH_LONG).show();
-
-            }
-            else {
+            } else {
                 try {
                     JSONObject obj = new JSONObject(s);
 
                     if (!obj.has(userName)) {
-                        reference.child(userName).child("dob").setValue(dob);
-                        reference.child(userName).child("nickname").setValue(nickName);
-                        reference.child(userName).child("phone").setValue(phoneNumber);
-                        reference.child(userName).child("gender").setValue(gender);
-                        reference.child(userName).child("bio").setValue(Bio);
+                        reference.child(user_id).child("username").setValue(userName);
+                        reference.child(user_id).child("dob").setValue(dob);
+                        reference.child(user_id).child("nickname").setValue(nickName);
+                        reference.child(user_id).child("phone").setValue(phoneNumber);
+                        reference.child(user_id).child("gender").setValue(gender);
+                        reference.child(user_id).child("bio").setValue(Bio);
+                        reference.child(user_id).child("imageUrl").setValue(String.valueOf(uri));
 
                         Toast.makeText(LoginActivity.this, "Soul Registered successfully", Toast.LENGTH_LONG).show();
 
                     } else {
                         Toast.makeText(LoginActivity.this, "Username already exists", Toast.LENGTH_LONG).show();
                     }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-
-        }, volleyError -> System.out.println("" + volleyError ));
+//            if(s.equals("null")) {
+//                reference.child(userName).child("dob").setValue(dob);
+//                reference.child(userName).child("nickname").setValue(nickName);
+//                reference.child(userName).child("phone").setValue(phoneNumber);
+//                reference.child(userName).child("gender").setValue(gender);
+//                reference.child(userName).child("bio").setValue(Bio);
+//                reference.child(userName).child("imageUrl").setValue("image/"+userName);
+//
+//                Toast.makeText(LoginActivity.this, "Soul Registered successfully", Toast.LENGTH_LONG).show();
+//            }
+//            else {
+//                try {
+//                    JSONObject obj = new JSONObject(s);
+//
+//                    if (!obj.has(userName)) {
+//                        reference.child(userName).child("dob").setValue(dob);
+//                        reference.child(userName).child("nickname").setValue(nickName);
+//                        reference.child(userName).child("phone").setValue(phoneNumber);
+//                        reference.child(userName).child("gender").setValue(gender);
+//                        reference.child(userName).child("bio").setValue(Bio);
+//                        reference.child(userName).child("imageUrl").setValue("image/"+userName);
+//
+//                        Toast.makeText(LoginActivity.this, "Soul Registered successfully", Toast.LENGTH_LONG).show();
+//
+//                    } else {
+//                        Toast.makeText(LoginActivity.this, "Username already exists", Toast.LENGTH_LONG).show();
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+        }, volleyError -> System.out.println("" + volleyError));
 
         RequestQueue rQueue = Volley.newRequestQueue(this);
         rQueue.add(request);
@@ -229,7 +284,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         dob = dobTxt.getText().toString();
         nickName = nickNameTxt.getText().toString();
         Bio = bioTxt.getText().toString();
-
 
         if (TextUtils.isEmpty(userName)) {
             userNameTxt.setError("Invalid username.");
@@ -255,12 +309,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             bioTxt.setError("Invalid bio.");
             return false;
         }
+        if (imageUri == null) {
+            Toast.makeText(this, "Please set an Avatar", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
 
     @SuppressLint("DefaultLocale")
-    public void openCalendar()
-    {
+    public void openCalendar() {
         final Calendar cldr = Calendar.getInstance();
         int day = cldr.get(Calendar.DAY_OF_MONTH);
         int month = cldr.get(Calendar.MONTH);
@@ -275,7 +332,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
 
         int id = view.getId();
-        switch (id){
+        switch (id) {
             case R.id.start_auth_button:
                 if (!validateUserDetails()) {
                     return;
@@ -299,5 +356,85 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
         }
+    }
+
+    public void image_(View view) {
+//        Options options = Options.init()
+//                .setRequestCode(100)                                                 //Request code for activity results
+//                .setCount(3)                                                         //Number of images to restict selection count
+//                .setFrontfacing(false)                                                //Front Facing camera on start
+//                .setImageQuality(ImageQuality.HIGH)                                  //Image Quality
+//                .setPreSelectedUrls(returnValue)                                     //Pre selected Image Urls
+//                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)           //Orientaion
+//                .setPath("/pix/images");                                             //Custom Path For Image Storage
+//
+//        Pix.start(MainActivity.this, options);
+
+        Pix.start(this, Options.init().setRequestCode(100));
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == 100) {
+            ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
+
+            if (returnValue != null) {
+                imageUri = Uri.fromFile(new File(returnValue.get(0)));
+                profile.setImageURI(imageUri);
+//                uploadImage_fire();
+            }
+        }
+    }
+
+    public void uploadImage_fire() {
+
+        //create reference to images folder and assing a name to the file that will be uploaded
+//        imageRef = storageRef.child("images/"+getFileExtension(imageUri));
+
+        //creating and showing progress dialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMax(100);
+        progressDialog.setMessage("Uploading...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+        progressDialog.setCancelable(false);
+
+        Log.i(TAG, "uploadImage_fire: " + getFileExtension(imageUri));
+        StorageReference riversRef = storageRef.child("images/" + userNameTxt.getText().toString());
+
+        riversRef.putFile(imageUri).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.i(TAG, "onFailure: " + exception.getMessage());
+                progressDialog.dismiss();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Log.i(TAG, "onSuccess: "+uri.toString());
+                        FireToDatabase(uri);
+                        if (setPrefsdetails()) {
+                            startActivity(new Intent(getApplicationContext(), UserActivity.class));
+                            finish();
+                        }
+                        progressDialog.dismiss();
+                        Toast.makeText(LoginActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+    public String getFileExtension(Uri uri) {
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 }

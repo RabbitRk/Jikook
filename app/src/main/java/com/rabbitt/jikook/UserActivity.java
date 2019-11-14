@@ -20,6 +20,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.database.FirebaseDatabase;
 import com.rabbitt.jikook.Preferences.PrefsManager;
 
 import org.json.JSONException;
@@ -42,11 +43,14 @@ public class UserActivity extends AppCompatActivity {
     ProgressDialog pd;
     SharedPreferences userpref;
     String userName;
+    ArrayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         Toolbar toolbar = findViewById(R.id.tool);
         setSupportActionBar(toolbar);
@@ -71,6 +75,7 @@ public class UserActivity extends AppCompatActivity {
         if (!prefsManager.isFirstTimeLaunch()) {
             prefsManager.setFirstTimeLaunch(true);
         }
+
         getUsers();
     }
 
@@ -80,7 +85,7 @@ public class UserActivity extends AppCompatActivity {
         pd.setMessage("Loading...");
         pd.show();
 
-        String url = "https://jikook-k2b15.firebaseio.com/users.json";
+        String url = "https://jikook-0215.firebaseio.com//users.json";
 
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             Log.i(TAG, "onResponse: "+s);
@@ -104,14 +109,21 @@ public class UserActivity extends AppCompatActivity {
             Iterator i = obj.keys();
             String key = "";
 
-            while (i.hasNext()) {
+            while (i.hasNext())
+            {
                 key = i.next().toString();
 
+//                JsonObject arr = new JsonObject(key);
+//
+//                JSONObject obj1 = new JSONObject();
+////                String e = obj.getString("username");
+//                Log.i(TAG, "doOnSuccess: "+);
                 if (!key.equals(userName)) {
                     al.add(key);
                 }
                 totalUsers++;
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -120,10 +132,10 @@ public class UserActivity extends AppCompatActivity {
             noUsersText.setVisibility(View.VISIBLE);
             usersList.setVisibility(View.GONE);
         } else {
-            usersList.setAdapter(null);
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, al);
             noUsersText.setVisibility(View.GONE);
             usersList.setVisibility(View.VISIBLE);
-            usersList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, al));
+            usersList.setAdapter(adapter);
         }
         pd.dismiss();
     }
@@ -145,6 +157,10 @@ public class UserActivity extends AppCompatActivity {
         if (id == R.id.action_refresh) {
             getUsers();
             return true;
+        }
+        else if(id == R.id.action_profile)
+        {
+            startActivity(new Intent(this, ProfileActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

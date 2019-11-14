@@ -1,7 +1,10 @@
 package com.rabbitt.jikook;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
@@ -9,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,14 +22,19 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.fxn.pix.Options;
+import com.fxn.pix.Pix;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.rabbitt.jikook.ChatAdapter.ChatMessage;
 import com.rabbitt.jikook.ChatAdapter.ToggleAdapter;
 import com.rabbitt.jikook.Preferences.PrefsManager;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,12 +59,18 @@ public class ChatRoom extends AppCompatActivity implements ToggleAdapter.OnRecyc
     RecyclerView recyclerView;
     List<ChatMessage> data = new ArrayList<>();
     ChatMessage model = null;
+
 //    public ArrayList<ChatMessage> messages;
     public ToggleAdapter adapter;
-    private static final int REQUEST_IMAGE = 2;
-    private FirebaseUser mFirebaseUser;
-    private FirebaseAuth mFirebaseAuth;
-    public static final String MESSAGES_CHILD = "messages";
+//    private static final int REQUEST_IMAGE = 2;
+//    private static final String LOADING_IMAGE_URL = "https://www.google.com/images/spin-32.gif";
+//    private String mPhotoUrl;
+//    private FirebaseUser mFirebaseUser;
+//    private FirebaseAuth mFirebaseAuth;
+//    public static final String MESSAGES_CHILD = "messages";
+
+
+    Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +78,7 @@ public class ChatRoom extends AppCompatActivity implements ToggleAdapter.OnRecyc
         setContentView(R.layout.activity_chat_room);
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+//        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         recyclerView = findViewById(R.id.chatlist);
         sendButton = findViewById(R.id.sendButton);
@@ -93,8 +108,8 @@ public class ChatRoom extends AppCompatActivity implements ToggleAdapter.OnRecyc
             return;
         }
 
-        reference1 = new Firebase("https://jikook-k2b15.firebaseio.com/messages/" + userName + "_" + chatwith);
-        reference2 = new Firebase("https://jikook-k2b15.firebaseio.com/messages/" + chatwith + "_" + userName);
+        reference1 = new Firebase("https://jikook-0215.firebaseio.com//messages/" + userName + "_" + chatwith);
+        reference2 = new Firebase("https://jikook-0215.firebaseio.com//messages/" + chatwith + "_" + userName);
 
         sendButton.setOnClickListener(v -> {
             String messageText = messageArea.getText().toString();
@@ -103,33 +118,53 @@ public class ChatRoom extends AppCompatActivity implements ToggleAdapter.OnRecyc
                 Map<String, String> map = new HashMap<>();
                 map.put("message", messageText);
                 map.put("user", userName);
+                map.put("type", "text");
                 reference1.push().setValue(map);
                 reference2.push().setValue(map);
                 messageArea.setText("");
             }
         });
 
-        sendImage.setOnClickListener(v ->{
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("image/*");
-            startActivityForResult(intent, REQUEST_IMAGE);
-        });
+        sendImage.setOnClickListener(v -> Pix.start(this, Options.init().setRequestCode(100)));
 
 
         reference1.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Map map = dataSnapshot.getValue(Map.class);
+                String type = Objects.requireNonNull(map.get("type")).toString();
                 String message = Objects.requireNonNull(map.get("message")).toString();
                 String userNamee = Objects.requireNonNull(map.get("user")).toString();
 
-                if(userNamee.equals(userName)){
-                    addMessageBox(message, 0);
+
+                switch (type)
+                {
+                    case "text":
+                        if(userNamee.equals(userName)){
+                            addMessageBox(message, 0, 0);
+                        }
+                        else{
+                            addMessageBox(message, 1, 0);
+                        }
+                        break;
+                    case "image":
+                        if(userNamee.equals(userName)){
+                            addMessageBox(message, 2, 1);
+                        }
+                        else{
+                            addMessageBox(message, 3, 1);
+                        }
+                        break;
                 }
-                else{
-                    addMessageBox(message, 1);
-                }
+
+
+//                if(userNamee.equals(userName)){
+//                    addMessageBox(message, 0);
+//                }
+//                else{
+//                    addMessageBox(message, 1);
+//                }
+
             }
 
             @Override
@@ -154,15 +189,14 @@ public class ChatRoom extends AppCompatActivity implements ToggleAdapter.OnRecyc
         });
     }
 
-
-
-    private void addMessageBox(String message, int type) {
+    private void addMessageBox(String message, int type, int s) {
 
         Log.i(TAG, "addMessageBox: "+message+type);
 
         model = new ChatMessage();
         model.setMessage(message);
         model.setIsMine(type);
+        model.setType(s);
 
         Log.i(TAG, message+" "+type);
         data.add(model);
@@ -177,70 +211,52 @@ public class ChatRoom extends AppCompatActivity implements ToggleAdapter.OnRecyc
         reLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setAdapter(adapter);
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
+
+        if (resultCode == Activity.RESULT_OK && requestCode == 100) {
+            ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
+
+            if (returnValue != null) {
+                imageUri = Uri.fromFile(new File(returnValue.get(0)));
+                putImageInStorage(imageUri);
+            }
+        }
 
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
-//
-//        if (requestCode == REQUEST_IMAGE) {
-//            if (resultCode == RESULT_OK) {
-//                if (data != null) {
-//                    final Uri uri = data.getData();
-//                    Log.d(TAG, "Uri: " + uri.toString());
-//
-//                    FriendlyMessage tempMessage = new FriendlyMessage(null, mUsername, mPhotoUrl, LOADING_IMAGE_URL);
-//
-//                    reference1.child(MESSAGES_CHILD).push().setValue(tempMessage, new DatabaseReference.CompletionListener() {
-//                                @Override
-//                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//                                    if (databaseError == null) {
-//                                        String key = databaseReference.getKey();
-//                                        StorageReference storageReference =
-//                                                FirebaseStorage.getInstance()
-//                                                        .getReference(mFirebaseUser.getUid())
-//                                                        .child(key)
-//                                                        .child(uri.getLastPathSegment());
-//
-//                                        putImageInStorage(storageReference, uri, key);
-//                                    } else {
-//                                        Log.w(TAG, "Unable to write message to database.",
-//                                                databaseError.toException());
-//                                    }
-//                                }
-//                            });
-//                }
-//            }
-//        }
-//    }
-//
-//    private void putImageInStorage(StorageReference storageReference, Uri uri, final String key) {
-//        storageReference.putFile(uri).addOnCompleteListener(this,
-//                new OnCompleteListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            task.getResult().getMetadata().getReference().getDownloadUrl()
-//                                    .addOnCompleteListener(this,
-//                                            new OnCompleteListener<Uri>() {
-//                                                @Override
-//                                                public void onComplete(@NonNull Task<Uri> task) {
-//                                                    if (task.isSuccessful()) {
-//                                                        FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, mPhotoUrl, task.getResult().toString());
-//                                                        mFirebaseDatabaseReference.child(MESSAGES_CHILD).child(key).setValue(friendlyMessage);
-//                                                    }
-//                                                }
-//                                            });
-//                        } else {
-//                            Log.w(TAG, "Image upload task was not successful.",
-//                                    task.getException());
-//                        }
-//                    }
-//                });
-//    }
-//
+    private void putImageInStorage(Uri uri) {
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+
+        StorageReference riversRef = storageRef.child("uploads/" + getCurrentTimeStamp());
+
+        riversRef.putFile(uri).addOnSuccessListener(task -> riversRef.getDownloadUrl().addOnSuccessListener(uri1 -> {
+            Log.i(TAG, "onSuccess: "+ uri1.toString());
+                Map<String, String> map = new HashMap<>();
+                map.put("user", userName);
+                map.put("message", String.valueOf(uri1));
+                map.put("type", "image");
+                reference1.push().setValue(map);
+                reference2.push().setValue(map);
+                messageArea.setText("");
+        }));
+    }
+
+    public static String getCurrentTimeStamp(){
+        try {
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return dateFormat.format(new Date());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     @Override
     public void OnItemClick(int position) {
