@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:contentScrim="@color/profilePrimaryDark"
+            app:contentScrim="@color/colorAccent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar"
             app:expandedTitleMarginEnd="64dp"
@@ -32,7 +32,7 @@
                 android:orientation="vertical"
                 android:id="@+id/linearLayout"
                 android:background="@drawable/profile_bk">
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profileImg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
                     android:id="@+id/nickname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="\@appsnippuser"
+                    android:text="-"
                     android:textSize="28dp"
                     android:layout_marginBottom="20dp"
                     android:textStyle="bold"/>

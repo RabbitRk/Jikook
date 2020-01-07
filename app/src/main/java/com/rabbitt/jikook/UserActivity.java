@@ -20,6 +20,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rabbitt.jikook.Preferences.PrefsManager;
 
@@ -43,6 +44,7 @@ public class UserActivity extends AppCompatActivity {
     ProgressDialog pd;
     SharedPreferences userpref;
     String userName;
+    FirebaseAuth mAuth;
     ArrayAdapter adapter;
 
     @Override
@@ -56,13 +58,13 @@ public class UserActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         //get tool bar
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
+//        if (getSupportActionBar() != null) {
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        }
 
         //toolbar action to go back is any activity exists
-        toolbar.setNavigationOnClickListener(v -> finish());
+//        toolbar.setNavigationOnClickListener(v -> finish());
 
         usersList = findViewById(R.id.usersList);
         noUsersText = findViewById(R.id.noUsersText);
@@ -77,6 +79,8 @@ public class UserActivity extends AppCompatActivity {
         }
 
         getUsers();
+        mAuth = FirebaseAuth.getInstance();
+        Log.i(TAG, "onCreate: "+mAuth.getCurrentUser().getUid());
     }
 
     private void getUsers() {

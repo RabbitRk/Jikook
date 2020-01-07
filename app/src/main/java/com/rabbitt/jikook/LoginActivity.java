@@ -40,7 +40,6 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.lusfold.spinnerloading.SpinnerLoading;
 import com.rabbitt.jikook.Preferences.PrefsManager;
 
 import org.json.JSONException;
@@ -72,7 +71,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     DatePickerDialog picker;
 
     String userName, phoneNumber, dob, nickName, Bio;
-    SpinnerLoading sp;
+//    SpinnerLoading sp;
 
 
     Uri selectedImage;
@@ -82,6 +81,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     UploadTask uploadTask;
 
     Uri imageUri;
+    String user_id;
+
+    ProgressDialog loading;
 
 
     @Override
@@ -111,11 +113,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         dobTxt = findViewById(R.id.Dob);
         bioTxt = findViewById(R.id.Bio);
         nickNameTxt = findViewById(R.id.NickName);
+ 
         startVerificationButton = findViewById(R.id.start_auth_button);
         maleb = findViewById(R.id.malebtn);
         femaleb = findViewById(R.id.femalebtn);
         parent = findViewById(R.id.dobParent);
-        sp = findViewById(R.id.spinner);
         profile = findViewById(R.id.profileImg);
 
         //cancelling the softinput for dob
@@ -159,7 +161,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         };
     }
-
+    
     private void startPhoneNumberVerification(String phoneNumber) {
         //send otp to the server
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
@@ -176,14 +178,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
-
                         try {
-
                             FirebaseUser user = Objects.requireNonNull(task.getResult()).getUser();
+                            user_id = mAuth.getCurrentUser().getUid();
                             if (user != null) {
                                 uploadImage_fire();
                             }
-                            sp.setVisibility(View.GONE);
+//                            sp.setVisibility(View.GONE);
                         } catch (NullPointerException ex) {
                             Log.i(TAG, "signInWithPhoneAuthCredential: " + ex.getMessage());
                         }
@@ -207,29 +208,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
 
             Firebase reference = new Firebase("https://jikook-0215.firebaseio.com/users");
-            String user_id = mAuth.getCurrentUser().getUid();
+           
             if (s.equals("null")) {
-                reference.child(user_id).child("username").setValue(userName);
-                reference.child(user_id).child("dob").setValue(dob);
-                reference.child(user_id).child("nickname").setValue(nickName);
-                reference.child(user_id).child("phone").setValue(phoneNumber);
-                reference.child(user_id).child("gender").setValue(gender);
-                reference.child(user_id).child("bio").setValue(Bio);
-                reference.child(user_id).child("imageUrl").setValue(String.valueOf(uri));
+                reference.child(userName).child("user_id").setValue(userName);
+                reference.child(userName).child("dob").setValue(dob);
+                reference.child(userName).child("nickname").setValue(nickName);
+                reference.child(userName).child("phone").setValue(phoneNumber);
+                reference.child(userName).child("gender").setValue(gender);
+                reference.child(userName).child("bio").setValue(Bio);
+                reference.child(userName).child("imageUrl").setValue(String.valueOf(uri));
 
                 Toast.makeText(LoginActivity.this, "Soul Registered successfully", Toast.LENGTH_LONG).show();
-            } else {
+            }
+            else
+            {
                 try {
                     JSONObject obj = new JSONObject(s);
 
                     if (!obj.has(userName)) {
-                        reference.child(user_id).child("username").setValue(userName);
-                        reference.child(user_id).child("dob").setValue(dob);
-                        reference.child(user_id).child("nickname").setValue(nickName);
-                        reference.child(user_id).child("phone").setValue(phoneNumber);
-                        reference.child(user_id).child("gender").setValue(gender);
-                        reference.child(user_id).child("bio").setValue(Bio);
-                        reference.child(user_id).child("imageUrl").setValue(String.valueOf(uri));
+                        reference.child(userName).child("user_id").setValue(user_id);
+                        reference.child(userName).child("dob").setValue(dob);
+                        reference.child(userName).child("nickname").setValue(nickName);
+                        reference.child(userName).child("phone").setValue(phoneNumber);
+                        reference.child(userName).child("gender").setValue(gender);
+                        reference.child(userName).child("bio").setValue(Bio);
+                        reference.child(userName).child("imageUrl").setValue(String.valueOf(uri));
 
                         Toast.makeText(LoginActivity.this, "Soul Registered successfully", Toast.LENGTH_LONG).show();
 
@@ -240,37 +243,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     e.printStackTrace();
                 }
             }
-//            if(s.equals("null")) {
-//                reference.child(userName).child("dob").setValue(dob);
-//                reference.child(userName).child("nickname").setValue(nickName);
-//                reference.child(userName).child("phone").setValue(phoneNumber);
-//                reference.child(userName).child("gender").setValue(gender);
-//                reference.child(userName).child("bio").setValue(Bio);
-//                reference.child(userName).child("imageUrl").setValue("image/"+userName);
-//
-//                Toast.makeText(LoginActivity.this, "Soul Registered successfully", Toast.LENGTH_LONG).show();
-//            }
-//            else {
-//                try {
-//                    JSONObject obj = new JSONObject(s);
-//
-//                    if (!obj.has(userName)) {
-//                        reference.child(userName).child("dob").setValue(dob);
-//                        reference.child(userName).child("nickname").setValue(nickName);
-//                        reference.child(userName).child("phone").setValue(phoneNumber);
-//                        reference.child(userName).child("gender").setValue(gender);
-//                        reference.child(userName).child("bio").setValue(Bio);
-//                        reference.child(userName).child("imageUrl").setValue("image/"+userName);
-//
-//                        Toast.makeText(LoginActivity.this, "Soul Registered successfully", Toast.LENGTH_LONG).show();
-//
-//                    } else {
-//                        Toast.makeText(LoginActivity.this, "Username already exists", Toast.LENGTH_LONG).show();
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
         }, volleyError -> System.out.println("" + volleyError));
 
         RequestQueue rQueue = Volley.newRequestQueue(this);
@@ -337,7 +309,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (!validateUserDetails()) {
                     return;
                 }
-                sp.setVisibility(View.VISIBLE);
+//                sp.setVisibility(View.VISIBLE);
+                loading = ProgressDialog.show(this, "Registering", "Please wait...we will automatically verify your OTP", false, true);
+
                 startPhoneNumberVerification(phoneNumberTxt.getText().toString());
                 break;
             case R.id.malebtn:
@@ -367,7 +341,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                .setPreSelectedUrls(returnValue)                                     //Pre selected Image Urls
 //                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)           //Orientaion
 //                .setPath("/pix/images");                                             //Custom Path For Image Storage
-//
 //        Pix.start(MainActivity.this, options);
 
         Pix.start(this, Options.init().setRequestCode(100));
@@ -378,8 +351,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == 100) {
-            ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
-
+            ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS); 
             if (returnValue != null) {
                 imageUri = Uri.fromFile(new File(returnValue.get(0)));
                 profile.setImageURI(imageUri);
@@ -393,6 +365,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //create reference to images folder and assing a name to the file that will be uploaded
 //        imageRef = storageRef.child("images/"+getFileExtension(imageUri));
 
+        loading.dismiss();
         //creating and showing progress dialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setMax(100);

@@ -45,16 +45,14 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileImg"
             android:layout_gravity="center"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:src="@drawable/camera"
-            android:scaleType="fitCenter"
             android:onClick="image_"
-            android:layout_marginBottom="5dp"
-            android:background="@color/profile"/>
+            android:layout_marginBottom="5dp" />
 
         <EditText
             android:id="@+id/userName"
@@ -93,7 +91,6 @@
             android:layout_height="60dp"
             android:layout_gravity="center"
             android:background="@drawable/txtbox"
-            android:cursorVisible="false"
             android:hint="@string/bio"
             android:importantForAutofill="no"
             android:inputType="text|textShortMessage"
@@ -199,12 +196,12 @@
 
 
 
-        <com.lusfold.spinnerloading.SpinnerLoading
-            android:id="@+id/spinner"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_horizontal"
-            android:visibility="gone" />
+<!--        <com.lusfold.spinnerloading.SpinnerLoading-->
+<!--            android:id="@+id/spinner"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:visibility="gone" />-->
     </LinearLayout>
 
 </ScrollView>

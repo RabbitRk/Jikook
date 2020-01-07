@@ -1,5 +1,6 @@
 package com.rabbitt.jikook;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -15,6 +16,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import static com.rabbitt.jikook.Preferences.PrefsManager.USER_NAME;
+import static com.rabbitt.jikook.Preferences.PrefsManager.USER_PREFS;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -43,15 +47,17 @@ public class ProfileActivity extends AppCompatActivity {
         phoneTxt = findViewById(R.id.mobile);
         bioTxt = findViewById(R.id.bio);
 
-       String user_id = mAuth.getCurrentUser().getUid();
+        SharedPreferences shrp = getSharedPreferences(USER_PREFS,MODE_PRIVATE);
+        String username = shrp.getString(USER_NAME,"");
+
+        String user_id = mAuth.getCurrentUser().getUid();
         Log.i(TAG, "onCreate: "+user_id);
 
-        mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(user_id);
+        mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(username);
 
         mUsersDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                userStr = dataSnapshot.child("username").getValue().toString();
                 nicknameStr = dataSnapshot.child("nickname").getValue().toString();
                 imageUrl = dataSnapshot.child("imageUrl").getValue().toString();
                 genderStr = dataSnapshot.child("gender").getValue().toString();
@@ -59,32 +65,17 @@ public class ProfileActivity extends AppCompatActivity {
                 bioStr = dataSnapshot.child("bio").getValue().toString();
                 dobStr = dataSnapshot.child("dob").getValue().toString();
 
-
                 bioTxt.setText(bioStr);
-                userTxt.setText(userStr);
+                userTxt.setText(username);
                 genderTxt.setText(genderStr);
                 phoneTxt.setText(phoneStr);
                 nicknameTxt.setText(nicknameStr);
                 dobTxt.setText(dobStr);
 
-//bioTxt, dobTxt, genderTxt, nicknameTxt, phoneTxt, userTxt
-                Log.i(TAG, "onDataChange: "+imageUrl);
-//                mProfileName.setText(display_name);
-//                mProfileStatus.setText(status);
-//
-//                Picasso.with(ProfileActivity.this).load(image).placeholder(R.drawable.default_avatar).into(mProfileImage);
-                Glide.with(ProfileActivity.this)
+                 Log.i(TAG, "onDataChange: "+imageUrl);
+                 Glide.with(ProfileActivity.this)
                         .load(imageUrl)
                         .into(profile_img);
-//                if(mCurrent_user.getUid().equals(user_id)){
-//
-//                    mDeclineBtn.setEnabled(false);
-//                    mDeclineBtn.setVisibility(View.INVISIBLE);
-//
-//                    mProfileSendReqBtn.setEnabled(false);
-//                    mProfileSendReqBtn.setVisibility(View.INVISIBLE);
-//
-//                }
             }
 
             @Override

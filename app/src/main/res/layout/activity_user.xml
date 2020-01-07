@@ -40,6 +40,10 @@
         android:id="@+id/noUsersText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="no_users_found"
-        android:visibility="gone"/>
+        android:text="No user found"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:visibility="visible"/>
 </LinearLayout>

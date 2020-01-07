@@ -78,6 +78,7 @@ public class ChatRoom extends AppCompatActivity implements ToggleAdapter.OnRecyc
         setContentView(R.layout.activity_chat_room);
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        Firebase.setAndroidContext(this);
 //        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         recyclerView = findViewById(R.id.chatlist);
@@ -92,8 +93,6 @@ public class ChatRoom extends AppCompatActivity implements ToggleAdapter.OnRecyc
         if (!prefsManager.isFirstTimeLaunch()) {
             prefsManager.setFirstTimeLaunch(true);
         }
-
-        Firebase.setAndroidContext(this);
 
         sp = getSharedPreferences(USER_PREFS, MODE_PRIVATE);
         userName = sp.getString(USER_NAME,"");
@@ -260,6 +259,16 @@ public class ChatRoom extends AppCompatActivity implements ToggleAdapter.OnRecyc
 
     @Override
     public void OnItemClick(int position) {
+        Log.i(TAG, "OnItemClick: ");
+        Log.i(TAG, "pos " + position);
 
+        ChatMessage model = data.get(position);
+        String productID = model.getMessage();
+        Log.i(TAG, "OnItemClick: "+productID);
+
+        Intent intent = new Intent(this, ImageViewerActivity.class);
+        intent.putExtra("image_url",productID);
+        intent.putExtra("user_name",userName);
+        startActivity(intent);
     }
 }

@@ -4,16 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:layout_margin="20dp"
     android:paddingTop="5dp"
-    android:paddingLeft="16dp"
     android:paddingRight="16dp">
         <ImageView
             android:id="@+id/img_chat"
-            android:minWidth="100dp"
-            android:minHeight="100dp"
-            android:maxWidth="150dp"
-            android:maxHeight="150dp"
-            android:background="#000"
+            android:minWidth="300dp"
+            android:minHeight="400dp"
+            android:maxWidth="300dp"
+            android:maxHeight="400dp"
+            android:background="#fff"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 </RelativeLayout>
